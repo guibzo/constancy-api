@@ -1,0 +1,29 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/http/server.ts",
+    "docker:start": "docker compose up -d",
+    "docker:stop": "docker compose stop"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e",
+  "devDependencies": {
+    "@biomejs/biome": "1.8.3",
+    "@types/node": "^22.5.4",
+    "drizzle-kit": "^0.24.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "drizzle-orm": "^0.33.0",
+    "fastify": "^4.28.1",
+    "postgres": "^3.4.4",
+    "zod": "^3.23.8"
+  }
+}
