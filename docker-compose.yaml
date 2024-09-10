@@ -1,4 +1,4 @@
-name: constancy-server
+name: constancy-api
 
 services:
   pg:
@@ -8,4 +8,4 @@ services:
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=inorbit
+      - POSTGRES_DB=constancyapi
