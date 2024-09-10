@@ -1,4 +1,4 @@
-name: pocket-js-server
+name: ioorbit-server
 
 services:
   pg:
