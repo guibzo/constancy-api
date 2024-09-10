@@ -1,5 +1,5 @@
 {
-  "name": "ioorbit-server",
+  "name": "constancy-server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

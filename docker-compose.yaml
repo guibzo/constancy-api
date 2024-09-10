@@ -1,4 +1,4 @@
-name: ioorbit-server
+name: constancy-server
 
 services:
   pg:
