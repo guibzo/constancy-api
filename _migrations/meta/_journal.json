@@ -15,6 +15,13 @@
       "when": 1725929418735,
       "tag": "0001_thick_living_lightning",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1726341625645,
+      "tag": "0002_rapid_nehzno",
+      "breakpoints": true
     }
   ]
 }

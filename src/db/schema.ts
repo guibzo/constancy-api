@@ -10,7 +10,7 @@ export const goals = pgTable('goals', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
-export const goalCompletions = pgTable('goal_completions', {
+export const goalConclusions = pgTable('goal_conclusions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => createId()),
