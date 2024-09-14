@@ -3,8 +3,7 @@ import { goalConclusions, goals } from '@/db/schema'
 import dayjs from 'dayjs'
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm'
 
-
-export const getWeekPendingGoalsUseCase = async () => {
+export const geetWeekPendingGoalsUseCase = async () => {
   const lastDayOfCurrentWeek = dayjs().endOf('week').toDate()
   const firstDayOfCurrentWeek = dayjs().startOf('week').toDate()
 
