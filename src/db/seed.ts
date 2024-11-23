@@ -1,18 +1,31 @@
 import dayjs from 'dayjs'
-import { client, db } from "."
-import { goalConclusions, goals } from './schema'
+import { client, db } from '.'
+import { goalConclusions, goals, users } from './schema'
 
 const seed = async () => {
   await db.delete(goalConclusions)
   await db.delete(goals)
 
-  const result = await db.insert(goals).values([
-    { title: 'Get a job', desiredWeeklyFrequency: 5 },
-    { title: 'Get a promotion', desiredWeeklyFrequency: 10 },
-    { title: 'Get a raise', desiredWeeklyFrequency: 20 },
-    { title: 'Get a test', desiredWeeklyFrequency: 25 },
-    { title: 'Get a bonus', desiredWeeklyFrequency: 30 },
-  ]).returning()
+  const [user] = await db
+    .insert(users)
+    .values({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      avatarURL: 'https://github.com/guibzo.png',
+      externalAccountId: 32482382,
+    })
+    .returning()
+
+  const result = await db
+    .insert(goals)
+    .values([
+      { userId: user.id, title: 'Get a job', desiredWeeklyFrequency: 5 },
+      { userId: user.id, title: 'Get a promotion', desiredWeeklyFrequency: 10 },
+      { userId: user.id, title: 'Get a raise', desiredWeeklyFrequency: 20 },
+      { userId: user.id, title: 'Get a test', desiredWeeklyFrequency: 25 },
+      { userId: user.id, title: 'Get a bonus', desiredWeeklyFrequency: 30 },
+    ])
+    .returning()
 
   const startOfWeek = dayjs().startOf('week')
 
