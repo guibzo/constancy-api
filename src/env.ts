@@ -4,6 +4,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
+  JWT_SECRET: z.string(),
 })
 
 const parsedEnv = envSchema.safeParse(process.env)

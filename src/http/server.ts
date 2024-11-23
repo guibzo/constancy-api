@@ -8,6 +8,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod'
+import { authenticateWithGitHubRoute } from './routes/authenticate-with-github'
 import { createGoalConclusionRoute } from './routes/create-goal-conclusion-route'
 import { createGoalRoute } from './routes/create-goal-route'
 import { getWeekPendingGoalsRoute } from './routes/get-week-pending-goals-route'
@@ -40,6 +41,7 @@ app.register(createGoalRoute)
 app.register(createGoalConclusionRoute)
 app.register(getWeekPendingGoalsRoute)
 app.register(getWeekSummaryRoute)
+app.register(authenticateWithGitHubRoute)
 
 app
   .listen({
