@@ -1,11 +1,13 @@
 import { getWeekSummaryUseCase } from '@/use-cases/get-week-summary-use-case'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
+import { authenticateUserMiddleware } from '../middlewares/authenticate-user'
 
 export const getWeekSummaryRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     '/week-summary',
     {
+      onRequest: [authenticateUserMiddleware],
       schema: {
         description: 'Get week summmary',
         tags: ['summary'],
