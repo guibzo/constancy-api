@@ -10,11 +10,12 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod'
-import { authenticateWithGitHubRoute } from './routes/authenticate-with-github'
-import { createGoalConclusionRoute } from './routes/create-goal-conclusion-route'
-import { createGoalRoute } from './routes/create-goal-route'
-import { getWeekPendingGoalsRoute } from './routes/get-week-pending-goals-route'
-import { getWeekSummaryRoute } from './routes/get-week-summary-route'
+import { getUserRoute } from './routes/account/get-user-route'
+import { authenticateWithGitHubRoute } from './routes/auth/authenticate-with-github'
+import { createGoalConclusionRoute } from './routes/goals/create-goal-conclusion-route'
+import { createGoalRoute } from './routes/goals/create-goal-route'
+import { getWeekPendingGoalsRoute } from './routes/goals/get-week-pending-goals-route'
+import { getWeekSummaryRoute } from './routes/goals/get-week-summary-route'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -46,8 +47,11 @@ app.register(fastifyJwt, {
 app.register(createGoalRoute)
 app.register(createGoalConclusionRoute)
 app.register(getWeekPendingGoalsRoute)
-app.register(getWeekSummaryRoute)
+
 app.register(authenticateWithGitHubRoute)
+
+app.register(getWeekSummaryRoute)
+app.register(getUserRoute)
 
 app
   .listen({

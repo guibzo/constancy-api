@@ -1,7 +1,10 @@
 import { db } from '@/db'
 import { users } from '@/db/schema'
-import { authenticateUser } from '@/modules/auth'
-import { getAccessTokenFromGitHubCode, getUserFromGitHubAccessToken } from '@/modules/github-oauth'
+import { authenticateUser } from '@/modules/auth/auth'
+import {
+  getAccessTokenFromGitHubCode,
+  getUserFromGitHubAccessToken,
+} from '@/modules/auth/github-oauth'
 import { eq } from 'drizzle-orm'
 
 type AuthenticateFromGitHubRequest = {
