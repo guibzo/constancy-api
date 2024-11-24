@@ -9,3 +9,5 @@ services:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=constancyapi
+    volumes:
+      - ./docker:/docker-entrypoint-initdb.d

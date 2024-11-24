@@ -1,4 +1,4 @@
-import { authenticateFromGitHubCodeUseCase } from '@/use-cases/auth/authenticate-from-github-code'
+import { authenticateFromGitHubCodeUseCase } from '@/use-cases/auth/authenticate-from-github-code/use-case'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 

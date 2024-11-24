@@ -1,7 +1,7 @@
-import { createGoalConclusionUseCase } from '@/use-cases/goals/create-goal-conclusion-use-case'
+import { createGoalConclusionUseCase } from '@/use-cases/goals/create-goal-conclusion/use-case'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { authenticateUserMiddleware } from '../../middlewares/authenticate-user'
+import { authenticateUserMiddleware } from '../../../middlewares/authenticate-user'
 
 export const createGoalConclusionRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(

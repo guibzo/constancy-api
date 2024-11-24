@@ -1,7 +1,7 @@
-import { getUserUseCase } from '@/use-cases/account/get-user-use-case'
+import { getUserUseCase } from '@/use-cases/account/get-user/use-case'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { authenticateUserMiddleware } from '../../middlewares/authenticate-user'
+import { authenticateUserMiddleware } from '../../../middlewares/authenticate-user'
 
 export const getUserRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
