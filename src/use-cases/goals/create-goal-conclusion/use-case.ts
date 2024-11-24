@@ -12,8 +12,8 @@ export const createGoalConclusionUseCase = async ({
   goalId,
   userId,
 }: CreateGoalConclusionRequest) => {
-  const lastDayOfCurrentWeek = dayjs().endOf('week').toDate()
-  const firstDayOfCurrentWeek = dayjs().startOf('week').toDate()
+  const lastDayOfWeek = dayjs().endOf('week').toDate()
+  const firstDayOfWeek = dayjs().startOf('week').toDate()
 
   const goalConclusionsCount = db.$with('goal_conclusions_count').as(
     db
@@ -25,8 +25,8 @@ export const createGoalConclusionUseCase = async ({
       .innerJoin(goals, eq(goals.id, goalConclusions.goalId))
       .where(
         and(
-          gte(goalConclusions.createdAt, firstDayOfCurrentWeek),
-          lte(goalConclusions.createdAt, lastDayOfCurrentWeek),
+          gte(goalConclusions.createdAt, firstDayOfWeek),
+          lte(goalConclusions.createdAt, lastDayOfWeek),
           eq(goalConclusions.goalId, goalId),
           eq(goals.userId, userId)
         )

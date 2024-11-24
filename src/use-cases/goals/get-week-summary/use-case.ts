@@ -5,13 +5,14 @@ import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
 
 type GetWeekSummaryRequest = {
   userId: string
+  weekStartsAt: Date
 }
 
-export const getWeekSummaryUseCase = async ({ userId }: GetWeekSummaryRequest) => {
-  const lastDayOfCurrentWeek = dayjs().endOf('week').toDate()
-  const firstDayOfCurrentWeek = dayjs().startOf('week').toDate()
+export const getWeekSummaryUseCase = async ({ userId, weekStartsAt }: GetWeekSummaryRequest) => {
+  const firstDayOfWeek = weekStartsAt
+  const lastDayOfWeek = dayjs(weekStartsAt).endOf('week').toDate()
 
-  const goalsCreatedUpToCurrentWeek = db.$with('goals_created_up_to_current_week').as(
+  const goalsCreatedUpToWeek = db.$with('goals_created_up_to_week').as(
     db
       .select({
         id: goals.id,
@@ -20,10 +21,10 @@ export const getWeekSummaryUseCase = async ({ userId }: GetWeekSummaryRequest) =
         createdAt: goals.createdAt,
       })
       .from(goals)
-      .where(and(lte(goals.createdAt, lastDayOfCurrentWeek), eq(goals.userId, userId)))
+      .where(and(lte(goals.createdAt, lastDayOfWeek), eq(goals.userId, userId)))
   )
 
-  const goalsCompletedInCurrentWeek = db.$with('goals_completed_in_current_week').as(
+  const goalsCompletedInWeek = db.$with('goals_completed_in_week').as(
     db
       .select({
         id: goalConclusions.id,
@@ -37,31 +38,31 @@ export const getWeekSummaryUseCase = async ({ userId }: GetWeekSummaryRequest) =
       .innerJoin(goals, eq(goals.id, goalConclusions.goalId))
       .where(
         and(
-          gte(goalConclusions.createdAt, firstDayOfCurrentWeek),
-          lte(goalConclusions.createdAt, lastDayOfCurrentWeek),
+          gte(goalConclusions.createdAt, firstDayOfWeek),
+          lte(goalConclusions.createdAt, lastDayOfWeek),
           eq(goals.userId, userId)
         )
       )
       .orderBy(desc(goalConclusions.createdAt))
   )
 
-  const goalsCompletedByCurrentWeekDay = db.$with('goals_completed_by_current_week_day').as(
+  const goalsCompletedByWeekDay = db.$with('goals_completed_by_week_day').as(
     db
       .select({
-        completedAtDate: goalsCompletedInCurrentWeek.completedAtDate,
+        completedAtDate: goalsCompletedInWeek.completedAtDate,
         conclusions: sql`
           JSON_AGG(
             JSON_BUILD_OBJECT(
-              'id', ${goalsCompletedInCurrentWeek.id},
-              'title', ${goalsCompletedInCurrentWeek.title},
-              'completedAt', ${goalsCompletedInCurrentWeek.completedAt}
+              'id', ${goalsCompletedInWeek.id},
+              'title', ${goalsCompletedInWeek.title},
+              'completedAt', ${goalsCompletedInWeek.completedAt}
             )
           )
         `.as('conclusions'),
       })
-      .from(goalsCompletedInCurrentWeek)
-      .groupBy(goalsCompletedInCurrentWeek.completedAtDate)
-      .orderBy(desc(goalsCompletedInCurrentWeek.completedAtDate))
+      .from(goalsCompletedInWeek)
+      .groupBy(goalsCompletedInWeek.completedAtDate)
+      .orderBy(desc(goalsCompletedInWeek.completedAtDate))
   )
 
   type GoalsPerDay = Record<
@@ -74,23 +75,24 @@ export const getWeekSummaryUseCase = async ({ userId }: GetWeekSummaryRequest) =
   >
 
   const result = await db
-    .with(goalsCreatedUpToCurrentWeek, goalsCompletedInCurrentWeek, goalsCompletedByCurrentWeekDay)
+    .with(goalsCreatedUpToWeek, goalsCompletedInWeek, goalsCompletedByWeekDay)
     .select({
-      completed: sql`(SELECT COUNT(*) FROM ${goalsCompletedInCurrentWeek})`.mapWith(Number),
+      completed: sql`(SELECT COUNT(*) FROM ${goalsCompletedInWeek})`.mapWith(Number),
       total:
-        sql`(SELECT SUM(${goalsCreatedUpToCurrentWeek.desiredWeeklyFrequency}) FROM ${goalsCreatedUpToCurrentWeek})`.mapWith(
+        // TODO: fix this
+        sql`(SELECT SUM(${goalsCreatedUpToWeek.desiredWeeklyFrequency}) FROM ${goalsCreatedUpToWeek})`.mapWith(
           Number
         ),
       goalsPerDay: sql<GoalsPerDay>`
         JSON_OBJECT_AGG(
-          ${goalsCompletedByCurrentWeekDay.completedAtDate},
-          ${goalsCompletedByCurrentWeekDay.conclusions}
+          ${goalsCompletedByWeekDay.completedAtDate},
+          ${goalsCompletedByWeekDay.conclusions}
         )
       `,
     })
-    .from(goalsCompletedByCurrentWeekDay)
+    .from(goalsCompletedByWeekDay)
 
   return {
-    summary: result,
+    summary: result[0],
   }
 }
