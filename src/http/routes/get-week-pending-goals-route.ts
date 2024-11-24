@@ -1,4 +1,4 @@
-import { geetWeekPendingGoalsUseCase } from '@/use-cases/get-week-pending-goals-use-case'
+import { getWeekPendingGoalsUseCase } from '@/use-cases/get-week-pending-goals-use-case'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { authenticateUserMiddleware } from '../middlewares/authenticate-user'
@@ -26,7 +26,8 @@ export const getWeekPendingGoalsRoute: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { pendingGoals } = await geetWeekPendingGoalsUseCase()
+      const userId = request.user.sub
+      const { pendingGoals } = await getWeekPendingGoalsUseCase({ userId })
 
       reply.send({ pendingGoals })
     }

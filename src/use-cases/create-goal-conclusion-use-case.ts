@@ -5,9 +5,13 @@ import { and, count, eq, gte, lte, sql } from 'drizzle-orm'
 
 type CreateGoalConclusionRequest = {
   goalId: string
+  userId: string
 }
 
-export const createGoalConclusionUseCase = async ({ goalId }: CreateGoalConclusionRequest) => {
+export const createGoalConclusionUseCase = async ({
+  goalId,
+  userId,
+}: CreateGoalConclusionRequest) => {
   const lastDayOfCurrentWeek = dayjs().endOf('week').toDate()
   const firstDayOfCurrentWeek = dayjs().startOf('week').toDate()
 
@@ -18,11 +22,13 @@ export const createGoalConclusionUseCase = async ({ goalId }: CreateGoalConclusi
         conclusionCount: count(goalConclusions.id).as('conclusionCount'),
       })
       .from(goalConclusions)
+      .innerJoin(goals, eq(goals.id, goalConclusions.goalId))
       .where(
         and(
           gte(goalConclusions.createdAt, firstDayOfCurrentWeek),
           lte(goalConclusions.createdAt, lastDayOfCurrentWeek),
-          eq(goalConclusions.goalId, goalId)
+          eq(goalConclusions.goalId, goalId),
+          eq(goals.userId, userId)
         )
       )
       .groupBy(goalConclusions.goalId)
@@ -38,19 +44,16 @@ export const createGoalConclusionUseCase = async ({ goalId }: CreateGoalConclusi
     })
     .from(goals)
     .leftJoin(goalConclusionsCount, eq(goalConclusionsCount.goalId, goals.id))
-    .where(eq(goals.id, goalId))
+    .where(and(eq(goals.id, goalId), eq(goals.userId, userId)))
     .limit(1)
 
   const { conclusionCount, desiredWeeklyFrequency } = result[0]
 
-  if(conclusionCount >= desiredWeeklyFrequency) {
+  if (conclusionCount >= desiredWeeklyFrequency) {
     throw new Error('Goal already completed this week')
   }
 
-  const insertResult = await db
-    .insert(goalConclusions)
-    .values({ goalId })
-    .returning()
+  const insertResult = await db.insert(goalConclusions).values({ goalId }).returning()
 
   const goalConclusion = insertResult[0]
 

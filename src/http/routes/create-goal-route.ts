@@ -22,8 +22,9 @@ export const createGoalRoute: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { title, desiredWeeklyFrequency } = request.body
+      const userId = request.user.sub
 
-      await createGoalUseCase({ title, desiredWeeklyFrequency })
+      await createGoalUseCase({ title, desiredWeeklyFrequency, userId })
 
       reply.status(201).send()
     }

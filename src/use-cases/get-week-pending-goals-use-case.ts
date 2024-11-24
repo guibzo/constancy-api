@@ -3,7 +3,11 @@ import { goalConclusions, goals } from '@/db/schema'
 import dayjs from 'dayjs'
 import { and, count, eq, gte, lte, sql } from 'drizzle-orm'
 
-export const geetWeekPendingGoalsUseCase = async () => {
+type GetWeekPendingGoalsRequest = {
+  userId: string
+}
+
+export const getWeekPendingGoalsUseCase = async ({ userId }: GetWeekPendingGoalsRequest) => {
   const lastDayOfCurrentWeek = dayjs().endOf('week').toDate()
   const firstDayOfCurrentWeek = dayjs().startOf('week').toDate()
 
@@ -16,7 +20,7 @@ export const geetWeekPendingGoalsUseCase = async () => {
         createdAt: goals.createdAt,
       })
       .from(goals)
-      .where(lte(goals.createdAt, lastDayOfCurrentWeek))
+      .where(and(lte(goals.createdAt, lastDayOfCurrentWeek), eq(goals.userId, userId)))
   )
 
   const goalConclusionsCount = db.$with('goal_conclusions_count').as(
@@ -26,10 +30,12 @@ export const geetWeekPendingGoalsUseCase = async () => {
         conclusionCount: count(goalConclusions.id).as('conclusionCount'),
       })
       .from(goalConclusions)
+      .innerJoin(goals, eq(goals.id, goalConclusions.goalId))
       .where(
         and(
           gte(goalConclusions.createdAt, firstDayOfCurrentWeek),
-          lte(goalConclusions.createdAt, lastDayOfCurrentWeek)
+          lte(goalConclusions.createdAt, lastDayOfCurrentWeek),
+          eq(goals.userId, userId)
         )
       )
       .groupBy(goalConclusions.goalId)
