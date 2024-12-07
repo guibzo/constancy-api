@@ -18,6 +18,7 @@ describe('Get week summary', () => {
         makeGoal({
           userId: user.id,
           desiredWeeklyFrequency: i + 1,
+          createdAt: weekStartsAt,
         })
       )
     )
@@ -46,8 +47,7 @@ describe('Get week summary', () => {
 
     expect(result).toEqual({
       summary: expect.objectContaining({
-        // TODO: fix this
-        // total: 6,
+        total: 6,
         completed: 4,
         goalsPerDay: expect.objectContaining({
           '2024-10-08': expect.arrayContaining([

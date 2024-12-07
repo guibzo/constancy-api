@@ -10,6 +10,7 @@ export const makeUser = async (override: Partial<InferSelectModel<typeof users>>
       name: faker.person.fullName(),
       externalAccountId: faker.number.int({ min: 1, max: 1_000_000 }),
       email: faker.internet.email(),
+      experience: 0,
       avatarURL: faker.image.avatarGitHub(),
       ...override,
     })

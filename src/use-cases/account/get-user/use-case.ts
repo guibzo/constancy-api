@@ -13,6 +13,7 @@ export const getUserUseCase = async ({ userId }: GetUserRequest) => {
       name: users.name,
       email: users.email,
       avatarURL: users.avatarURL,
+      experience: users.experience,
     })
     .from(users)
     .where(eq(users.id, userId))
